@@ -97,7 +97,11 @@ if (-not $CoreOnly) {
     Write-Phase "增强工具 (可选)"
     if (Want-Tool 'bat' '高亮 cat')         { Install-ScoopPkg -Cmd 'bat' -Pkg 'bat' -Desc 'bat' }
     if (Want-Tool 'zoxide' '智能 cd')        { Install-ScoopPkg -Cmd 'zoxide' -Pkg 'zoxide' -Desc 'zoxide' }
-    if (Want-Tool 'fastfetch' '系统信息 ff') { Install-ScoopPkg -Cmd 'fastfetch' -Pkg 'fastfetch' -Desc 'fastfetch' }
+    if (Want-Tool 'fastfetch' '看板娘 ff (含 chafa 图片)') {
+        Install-ScoopPkg -Cmd 'fastfetch' -Pkg 'fastfetch' -Desc 'fastfetch'
+        # chafa: 把图片转真彩色字符画，ff 看板娘用它显示图片（不依赖 sixel）
+        Install-ScoopPkg -Cmd 'chafa' -Pkg 'chafa' -Desc 'chafa'
+    }
     if (Want-Tool 'fzf' '模糊查找') {
         Install-ScoopPkg -Cmd 'fzf' -Pkg 'fzf' -Desc 'fzf'
         # 不安装 PSFzf 模块：它仅发布于 PSGallery（常不可达），且源码版需构建。

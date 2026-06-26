@@ -19,6 +19,8 @@
 
 ## 📸 效果预览
 
+![pwsh-pretty preview](./assets/use-ff-image.png)
+
 ![pwsh-pretty 预览](./assets/preview.png)
 
 路径在圆角彩色胶囊里，不会和上一行输出糊在一起。箭头**成功为绿、失败为红**。`ls` 显示彩色 Nerd Font 图标，目录优先。

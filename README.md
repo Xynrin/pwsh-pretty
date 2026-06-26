@@ -19,7 +19,9 @@ Built for **Windows + PowerShell 7**, friendly to **restricted networks** (scoop
 
 ## 📸 Preview
 
-![pwsh-pretty preview](./assets/preview.png)
+![pwsh-pretty preview](./assets/use-ff-image.png)
+
+![powershell](./assets/preview.png)
 
 The path sits in a rounded, colored capsule so it never blends into the previous command's output. The arrow turns **green on success**, **red on failure**. `ls` shows colored Nerd Font icons, directories first.
 

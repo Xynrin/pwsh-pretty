@@ -34,8 +34,8 @@ ff — fastfetch 看板娘
         # ---- 配置 ----
         $cacheDir = Join-Path $env:USERPROFILE '.cache\fastfetch_waifu'
         $usedDir  = Join-Path $cacheDir 'used'
-        $minTrigger   = 5     # 库存低于此值触发补货
-        $batchSize    = 8     # 每次补货下载张数
+        $minTrigger   = 10    # 库存低于此值触发补货
+        $batchSize    = 10    # 每次补货下载张数
         $maxStock     = 40    # 待用上限
         $maxUsed      = 20    # 已用上限
         $categories   = 'waifu','neko','kitsune'
@@ -45,17 +45,29 @@ ff — fastfetch 看板娘
         # ---- 纯系统信息模式 ----
         if ($NoImage) { fastfetch; return }
 
+        # ---- 定位 chafa（PATH 或 scoop 安装路径）----
+        $chafaExe = $null
+        if (Get-Command chafa -ErrorAction SilentlyContinue) {
+            $chafaExe = (Get-Command chafa).Source
+        } elseif (Test-Path "$HOME\scoop\apps\chafa\current\chafa.exe") {
+            $chafaExe = "$HOME\scoop\apps\chafa\current\chafa.exe"
+        }
+
         # ---- 选一张已缓存的图片显示 ----
         $stock = @(Get-ChildItem $cacheDir -Filter '*.png' -File -ErrorAction SilentlyContinue)
-        if ($stock.Count -gt 0) {
+        if ($stock.Count -gt 0 -and $chafaExe) {
             $pick = $stock | Get-Random
-            # 用 sixel 协议显示图片 logo（WT 需启用 sixel；失败时 fastfetch 会回退）
-            fastfetch --logo-type sixel --logo "$($pick.FullName)" 2>$null
-            if ($LASTEXITCODE -ne 0) { fastfetch }   # 协议不支持则降级
-            # 用过的移到 used 目录
-            try { Move-Item $pick.FullName (Join-Path $usedDir $pick.Name) -Force -ErrorAction SilentlyContinue } catch {}
+            # chafa 输出 sixel 高清图（WT 支持 sixel；fastfetch 自带的 sixel 在 WT 不工作，
+            # 而 chafa 的 sixel 能正确渲染）。高清图在上，系统信息在下。
+            & $chafaExe -f sixels --size=40x22 "$($pick.FullName)" 2>$null
+            Write-Host ''
+            fastfetch --logo none 2>$null
+            # 轮换：库存充足时把这张移到 used（保证每次随机到不同图），库存少时保留
+            if ($stock.Count -gt 1) {
+                try { Move-Item $pick.FullName (Join-Path $usedDir $pick.Name) -Force -ErrorAction SilentlyContinue } catch {}
+            }
         } else {
-            # 库存为空：先显示纯信息，下载在后台进行
+            # 无图或无 chafa：纯系统信息
             fastfetch
         }
 

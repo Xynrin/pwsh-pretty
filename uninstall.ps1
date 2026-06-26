@@ -60,7 +60,7 @@ if (Test-Path $wtBackup) {
 if ($RemoveTools) {
     Write-Phase "卸载工具 (-RemoveTools)"
     if (Get-Command scoop -ErrorAction SilentlyContinue) {
-        foreach ($pkg in 'oh-my-posh','eza','bat','zoxide','fzf','fastfetch','JetBrainsMono-NF') {
+        foreach ($pkg in 'oh-my-posh','eza','bat','zoxide','fzf','fastfetch','chafa','JetBrainsMono-NF') {
             try { scoop uninstall $pkg *>&1 | Out-Null; Write-Item "已卸载 $pkg" 'ok' }
             catch { Write-Item "$pkg 未安装或跳过" 'skip' }
         }
