@@ -58,3 +58,52 @@ Set-PSReadLineKeyHandler -Key Tab       -Function MenuComplete
 # 上下键保持正常的历史翻页行为
 Set-PSReadLineKeyHandler -Key UpArrow   -Function PreviousHistory
 Set-PSReadLineKeyHandler -Key DownArrow -Function NextHistory
+
+# ============================================================
+#  增强工具 (每个都按是否安装条件加载，没装则静默跳过)
+# ============================================================
+
+# ----- bat: 带语法高亮和行号的 cat -----
+if (Get-Command bat -ErrorAction SilentlyContinue) {
+    Set-Alias -Name cat -Value bat -Option AllScope -Force
+    $env:BAT_THEME = 'ansi'
+}
+
+# ----- mdcat: 在终端渲染 Markdown -----
+# 优先 PATH 里的 mdcat，其次 pwsh-pretty 部署的本地副本
+$mdcatCmd = $null
+if (Get-Command mdcat -ErrorAction SilentlyContinue) {
+    $mdcatCmd = 'mdcat'
+} elseif (Test-Path "$HOME\scoop\apps\mdcat\current\mdcat.exe") {
+    $mdcatCmd = "$HOME\scoop\apps\mdcat\current\mdcat.exe"
+} elseif (Test-Path (Join-Path (Split-Path $PROFILE -Parent) 'bin\mdcat.exe')) {
+    $mdcatCmd = Join-Path (Split-Path $PROFILE -Parent) 'bin\mdcat.exe'
+}
+if ($mdcatCmd) {
+    function md { & $mdcatCmd @args }          # md <file.md> 渲染 markdown
+}
+
+# ----- zoxide: 智能 cd 跳转 (z <关键词>) -----
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { (zoxide init powershell | Out-String) })
+}
+
+# ----- fzf + PSFzf: 模糊查找 (Ctrl+T 找文件, Ctrl+R 搜历史) -----
+if (Get-Command fzf -ErrorAction SilentlyContinue) {
+    # 预览：文件用 bat，目录用 eza
+    $env:FZF_DEFAULT_OPTS = '--height 40% --layout=reverse --border --info=inline'
+    if (Get-Module -ListAvailable PSFzf -ErrorAction SilentlyContinue) {
+        Import-Module PSFzf -ErrorAction SilentlyContinue
+        try {
+            Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
+        } catch { }
+    }
+}
+
+# ----- fastfetch: 启动时显示系统信息 -----
+# 默认不自动运行，避免拖慢启动；输入 `ff` 手动查看
+if (Get-Command fastfetch -ErrorAction SilentlyContinue) {
+    Set-Alias -Name ff -Value fastfetch -Option AllScope -Force
+    # 想开机自动显示，取消下面一行注释：
+    # if ($Host.Name -eq 'ConsoleHost') { fastfetch }
+}

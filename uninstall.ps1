@@ -60,11 +60,21 @@ if (Test-Path $wtBackup) {
     Write-Warn2 "无 WT 备份，跳过 (字体设置如需还原请手动改)"
 }
 
-# ---------- 4. 可选：卸载工具 ----------
+# ---------- 4. 删除 pwsh-pretty 部署的本地副本 (mdcat 等) ----------
+Write-Step "清理本地部署的工具"
+$binDir = Join-Path (Split-Path $PROFILE -Parent) 'bin'
+if (Test-Path "$binDir\mdcat.exe") {
+    Remove-Item "$binDir\mdcat.exe" -Force
+    Write-Ok "已删除 mdcat.exe"
+    # bin 目录空了就一起删
+    if (-not (Get-ChildItem $binDir -ErrorAction SilentlyContinue)) { Remove-Item $binDir -Force }
+}
+
+# ---------- 5. 可选：卸载工具 ----------
 if ($RemoveTools) {
     Write-Step "卸载工具 (-RemoveTools)"
     if (Get-Command scoop -ErrorAction SilentlyContinue) {
-        foreach ($pkg in 'oh-my-posh', 'eza', 'JetBrainsMono-NF') {
+        foreach ($pkg in 'oh-my-posh', 'eza', 'bat', 'zoxide', 'fzf', 'fastfetch', 'JetBrainsMono-NF') {
             try {
                 scoop uninstall $pkg
                 Write-Ok "已卸载 $pkg"
@@ -73,10 +83,16 @@ if ($RemoveTools) {
             }
         }
     } else {
-        Write-Warn2 "未找到 scoop，无法自动卸载工具"
+        Write-Warn2 "未找到 scoop，无法自动卸载 scoop 工具"
+    }
+    # PSFzf 模块 (从 GitHub 装的)
+    $psfzf = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'PowerShell\Modules\PSFzf'
+    if (Test-Path $psfzf) {
+        Remove-Item $psfzf -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Ok "已删除 PSFzf 模块"
     }
 } else {
-    Write-Warn2 "保留 oh-my-posh / eza / 字体 (如需卸载请加 -RemoveTools)"
+    Write-Warn2 "保留所有工具 (如需卸载请加 -RemoveTools)"
 }
 
 Write-Host ""
