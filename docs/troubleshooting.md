@@ -31,13 +31,13 @@ $env:PWSH_PRETTY_PROXY='http://127.0.0.1:7897'
 
 开一个**新终端**，让更新后的 `PATH`（scoop shims）生效。若仍不行，手动 `scoop install <包名>`。
 
-## PSFzf 的 Ctrl+R / Ctrl+T 不生效
+## fzf 的 Ctrl+R / Ctrl+T 不生效
 
-PSFzf 模块可能未装成功（PSGallery 不可达时从 GitHub 安装）。检查：
-```powershell
-Get-Module -ListAvailable PSFzf
-```
-没有的话，fzf 本身仍可直接用（命令行输入 `fzf`）。
+1. 确认 fzf 已安装：`Get-Command fzf`
+2. 键绑定只在交互式终端（ConsoleHost）注册，确认你在正常的 Windows Terminal 里
+3. 检查绑定：`Get-PSReadLineKeyHandler | Where-Object Key -in 'Ctrl+r','Ctrl+t'`
+
+本项目用 PSReadLine 原生键绑定调用 fzf，不依赖 PSFzf 模块。
 
 ## 提交 issue 时请附上
 

@@ -22,14 +22,30 @@ if (Get-Command zoxide -ErrorAction SilentlyContinue) {
     Invoke-Expression (& { (zoxide init powershell | Out-String) })
 }
 
-# ----- fzf + PSFzf: 模糊查找 (Ctrl+T 找文件, Ctrl+R 搜历史) -----
+# ----- fzf: 模糊查找 (Ctrl+T 找文件, Ctrl+R 搜历史) -----
+# 不依赖 PSFzf 模块 (其官方仅发布于 PSGallery)，改用 PSReadLine 原生键绑定调用 fzf
 if (Get-Command fzf -ErrorAction SilentlyContinue) {
     $env:FZF_DEFAULT_OPTS = '--height 40% --layout=reverse --border --info=inline'
-    if (Get-Module -ListAvailable PSFzf -ErrorAction SilentlyContinue) {
-        Import-Module PSFzf -ErrorAction SilentlyContinue
-        try {
-            Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
-        } catch { }
+
+    if ($Host.Name -eq 'ConsoleHost') {
+        # Ctrl+T：在当前目录模糊选文件，插入到命令行
+        Set-PSReadLineKeyHandler -Key 'Ctrl+t' -ScriptBlock {
+            $file = fzf
+            if ($file) {
+                [Microsoft.PowerShell.PSConsoleReadLine]::Insert("`"$file`"")
+            }
+        }
+        # Ctrl+R：模糊搜索命令历史
+        Set-PSReadLineKeyHandler -Key 'Ctrl+r' -ScriptBlock {
+            $historyPath = (Get-PSReadLineOption).HistorySavePath
+            if (Test-Path $historyPath) {
+                $cmd = Get-Content $historyPath | Select-Object -Unique | Sort-Object -Descending | fzf
+                if ($cmd) {
+                    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+                    [Microsoft.PowerShell.PSConsoleReadLine]::Insert($cmd)
+                }
+            }
+        }
     }
 }
 

@@ -100,23 +100,8 @@ if (-not $CoreOnly) {
     if (Want-Tool 'fastfetch' '系统信息 ff') { Install-ScoopPkg -Cmd 'fastfetch' -Pkg 'fastfetch' -Desc 'fastfetch' }
     if (Want-Tool 'fzf' '模糊查找') {
         Install-ScoopPkg -Cmd 'fzf' -Pkg 'fzf' -Desc 'fzf'
-        if (-not (Get-Module -ListAvailable PSFzf -ErrorAction SilentlyContinue)) {
-            try {
-                $psfzfDir = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'PowerShell\Modules\PSFzf'
-                $tmp = Join-Path $env:TEMP "psfzf-$(Get-Random)"
-                Write-Item "克隆 PSFzf (GitHub) ..." 'work'
-                # 直接同步 clone（不用 spinner/Start-Job，否则代理环境变量不会传入子进程）
-                git clone --depth 1 https://github.com/kelleyma49/PSFzf.git $tmp 2>&1 | Out-Null
-                if (-not (Test-Path "$tmp\PSFzf.psd1")) { throw "克隆失败或仓库结构异常" }
-                $ver = (Select-String -Path "$tmp\PSFzf.psd1" -Pattern "ModuleVersion\s*=\s*'([\d.]+)'").Matches.Groups[1].Value
-                if (-not $ver) { $ver = '2.6.7' }
-                $dest = Join-Path $psfzfDir $ver
-                New-Item -ItemType Directory -Path $dest -Force | Out-Null
-                Copy-Item "$tmp\*" $dest -Recurse -Force -Exclude '.git','.github','tests','helpers'
-                Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
-                Write-Item "PSFzf 模块安装完成 (v$ver)" 'ok'
-            } catch { Write-Item "PSFzf 安装失败，fzf 仍可用: $($_.Exception.Message)" 'fail' }
-        } else { Write-Item "PSFzf 已存在" 'skip' }
+        # 不安装 PSFzf 模块：它仅发布于 PSGallery（常不可达），且源码版需构建。
+        # profile.d/50-tools.ps1 用 PSReadLine 原生键绑定调用 fzf，无需该模块。
     }
     if (Want-Tool 'mdcat' 'Markdown 渲染 md') {
         if (Get-Command mdcat -ErrorAction SilentlyContinue) { Write-Item "mdcat 已存在" 'skip' }
