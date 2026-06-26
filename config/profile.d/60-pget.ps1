@@ -31,10 +31,11 @@ pget — fzf 驱动的包管理 TUI
         $q = ($Query -join ' ').Trim()
         $esc = [char]27
         $fzfOpts = @(
-            '--ansi','--multi','--height=80%','--layout=reverse','--border',
+            '--ansi','--multi','--height=90%','--layout=reverse','--border',
             '--prompt=pkg> ',
             "--header=Tab:多选  Enter:安装  Esc:退出",
-            '--preview-window=down,3,wrap'
+            # 预览放右侧、占 60% 宽，足够完整显示 scoop info
+            '--preview-window=right,60%,wrap'
         )
 
         if ($w) {
