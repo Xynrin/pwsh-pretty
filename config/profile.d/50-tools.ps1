@@ -7,14 +7,20 @@ if (Get-Command bat -ErrorAction SilentlyContinue) {
 }
 
 # ----- mdcat: 在终端渲染 Markdown (md <file>) -----
-$mdcatCmd = $null
+$mdcatExe = $null
 if (Get-Command mdcat -ErrorAction SilentlyContinue) {
-    $mdcatCmd = 'mdcat'
+    $mdcatExe = (Get-Command mdcat).Source
 } elseif (Test-Path (Join-Path (Split-Path $PROFILE -Parent) 'bin\mdcat.exe')) {
-    $mdcatCmd = Join-Path (Split-Path $PROFILE -Parent) 'bin\mdcat.exe'
+    $mdcatExe = Join-Path (Split-Path $PROFILE -Parent) 'bin\mdcat.exe'
+    # 把 bin 目录加入本会话 PATH，让 `mdcat` 也能直接调用
+    $binDir = Split-Path $mdcatExe -Parent
+    if ($env:PATH -notlike "*$binDir*") { $env:PATH = "$binDir;$env:PATH" }
 }
-if ($mdcatCmd) {
-    function md { & $mdcatCmd @args }
+if ($mdcatExe) {
+    # 内置的 md 是 mkdir 的别名，且 Alias 优先级高于 Function，必须先移除
+    if (Test-Path Alias:md) { Remove-Item Alias:md -Force -ErrorAction SilentlyContinue }
+    $script:MdcatExe = $mdcatExe
+    function md { & $script:MdcatExe @args }
 }
 
 # ----- zoxide: 智能 cd 跳转 (z <关键词>) -----
