@@ -30,6 +30,7 @@ The path sits in a rounded, colored capsule so it never blends into the previous
 - ⌨️ **History autosuggestions** — inline gray hint, press `→` to accept
 - 🈶 **UTF-8 by default** — fixes garbled non-ASCII filenames & icons
 - 🧰 **Optional power tools** — fzf, bat, mdcat, zoxide, fastfetch (asked during install)
+- 📦 **`pget` package TUI** — fzf-driven search → multi-select → install (scoop / winget)
 - 🧩 **Modular config** — profile split into `profile.d/` fragments; drop a file to add a feature
 - ↩️ **Fully reversible** — backs up your config; `uninstall.ps1` restores everything
 
