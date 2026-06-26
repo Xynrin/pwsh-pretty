@@ -33,11 +33,15 @@ pget -h           # 帮助
 ### bat — 更好的 cat
 安装后 `cat` 自动指向 bat，带语法高亮和行号。查看原始内容用 `bat --plain` 或 `Get-Content`。
 
+![cat (bat) 效果](../assets/use-cat.png)
+
 ### mdcat — Markdown 渲染
 ```powershell
 md README.md
 ```
 在终端里以富文本样式渲染 Markdown（标题、列表、代码块、链接）。本项目固定使用 mdcat **2.9.1**，从 [BIRSAx2/mdcat](https://github.com/BIRSAx2/mdcat) 的 release 安装，部署到 `$PROFILE` 同目录的 `bin/` 下。
+
+![md (mdcat) 效果](../assets/use-md.png)
 
 ### zoxide — 智能跳转
 ```powershell
@@ -52,11 +56,22 @@ zoxide 会记住你 `cd` 过的目录，用 `z 关键词` 即可快速跳转。
 
 通过 PSReadLine 原生键绑定直接调用 fzf，**不依赖 PSFzf 模块**（PSFzf 仅发布于 PowerShell Gallery，部分网络不可达，且其 GitHub 源码版需要构建）。这样更轻量、更可靠。
 
+![fzf 效果](../assets/use-fzf.png)
+![fzf 快捷键效果](../assets/use-fzf-ctrl.png)
+
 ### fastfetch — 系统信息
 ```powershell
 ff          # 显示系统信息（OS、CPU、内存、终端等）
 ```
 默认不在启动时自动运行（避免拖慢开终端）。若想开机自动显示，编辑 profile，取消 fastfetch 区块里那行注释。
+
+![fastfetch 效果](../assets/use-ff.png)
+
+### eza — 带图标的 ls
+`lt` 以树状展示目录（2 层）：
+
+![lt (eza 树状) 效果](../assets/use-lt.png)
+
 
 ## 安装控制
 
