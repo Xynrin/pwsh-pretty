@@ -1,5 +1,27 @@
 # 自定义 / Customization
 
+## 模块化结构 (profile.d)
+
+pwsh-pretty 的 profile 是模块化的。主 `$PROFILE` 只负责按文件名顺序加载同目录 `profile.d/` 下的所有 `*.ps1` 片段：
+
+```text
+$PROFILE 所在目录/
+├── Microsoft.PowerShell_profile.ps1   # 主入口，自动加载下面的片段
+├── my-minimal.omp.json                # 提示符主题
+└── profile.d/
+    ├── 10-encoding.ps1    # UTF-8 编码
+    ├── 20-prompt.ps1      # oh-my-posh 提示符
+    ├── 30-eza.ps1         # eza (ls 系列)
+    ├── 40-psreadline.ps1  # 补全 / 历史预测
+    └── 50-tools.ps1       # bat / mdcat / zoxide / fzf / fastfetch
+```
+
+**想加功能**：在 `profile.d/` 丢一个新的 `60-xxx.ps1`，下次开终端自动加载。
+**想关某功能**：删掉或重命名（如改成 `.ps1.off`）对应片段即可。
+编号决定加载顺序，留有间隔（10/20/30…）方便插入。
+
+---
+
 ## 修改提示符
 
 主题文件位于 `config/my-minimal.omp.json`，安装后复制到 `$PROFILE` 同目录。

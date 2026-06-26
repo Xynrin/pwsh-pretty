@@ -39,6 +39,8 @@ git clone --depth 1 $repo $dest
 $installArgs = @{}
 if ($proxy) { $installArgs['Proxy'] = $proxy }
 if ($env:PWSH_PRETTY_SKIPFONT -eq '1') { $installArgs['SkipFont'] = $true }
+if ($env:PWSH_PRETTY_ALL      -eq '1') { $installArgs['All'] = $true }
+if ($env:PWSH_PRETTY_COREONLY -eq '1') { $installArgs['CoreOnly'] = $true }
 
 Write-Step "运行 install.ps1"
 try {
