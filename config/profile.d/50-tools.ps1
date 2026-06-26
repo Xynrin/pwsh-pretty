@@ -55,9 +55,4 @@ if (Get-Command fzf -ErrorAction SilentlyContinue) {
     }
 }
 
-# ----- fastfetch: 系统信息 (ff) -----
-if (Get-Command fastfetch -ErrorAction SilentlyContinue) {
-    Set-Alias -Name ff -Value fastfetch -Option AllScope -Force
-    # 想开机自动显示，取消下一行注释：
-    # if ($Host.Name -eq 'ConsoleHost') { fastfetch }
-}
+# ----- fastfetch: 见 55-fastfetch-waifu.ps1 (看板娘版 ff) -----
