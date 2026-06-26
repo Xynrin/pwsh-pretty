@@ -70,7 +70,9 @@ function Want-Tool {
 Write-Phase "安装核心 (scoop + oh-my-posh + eza)"
 if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-    Invoke-WithSpinner "安装 scoop" { Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression }
+    Write-Item "安装 scoop ..." 'work'
+    Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+    Write-Item "scoop 安装完成" 'ok'
 } else { Write-Item "scoop 已存在" 'skip' }
 Install-ScoopPkg -Cmd 'oh-my-posh' -Pkg 'oh-my-posh' -Desc 'oh-my-posh'
 if (-not (Test-Path "$HOME\scoop\apps\eza\current\eza.exe")) {
@@ -84,7 +86,8 @@ if (-not $SkipFont) {
         ForEach-Object { $_.PSObject.Properties.Name } | Where-Object { $_ -match 'JetBrainsMono' }
     if (-not $fontInstalled) {
         if (-not (scoop bucket list | Select-String 'nerd-fonts')) { scoop bucket add nerd-fonts *>&1 | Out-Null }
-        Invoke-WithSpinner "下载并安装 JetBrainsMono Nerd Font" { scoop install JetBrainsMono-NF *>&1 | Out-Null }
+        Write-Item "下载并安装 JetBrainsMono Nerd Font ..." 'work'
+        scoop install JetBrainsMono-NF *>&1 | Out-Null
         Write-Item "字体安装完成" 'ok'
     } else { Write-Item "JetBrainsMono Nerd Font 已安装" 'skip' }
 }
@@ -101,17 +104,18 @@ if (-not $CoreOnly) {
             try {
                 $psfzfDir = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'PowerShell\Modules\PSFzf'
                 $tmp = Join-Path $env:TEMP "psfzf-$(Get-Random)"
-                Invoke-WithSpinner "安装 PSFzf 模块 (GitHub)" {
-                    git clone --depth 1 https://github.com/kelleyma49/PSFzf.git $using:tmp 2>&1 | Out-Null
-                }
+                Write-Item "克隆 PSFzf (GitHub) ..." 'work'
+                # 直接同步 clone（不用 spinner/Start-Job，否则代理环境变量不会传入子进程）
+                git clone --depth 1 https://github.com/kelleyma49/PSFzf.git $tmp 2>&1 | Out-Null
+                if (-not (Test-Path "$tmp\PSFzf.psd1")) { throw "克隆失败或仓库结构异常" }
                 $ver = (Select-String -Path "$tmp\PSFzf.psd1" -Pattern "ModuleVersion\s*=\s*'([\d.]+)'").Matches.Groups[1].Value
                 if (-not $ver) { $ver = '2.6.7' }
                 $dest = Join-Path $psfzfDir $ver
                 New-Item -ItemType Directory -Path $dest -Force | Out-Null
                 Copy-Item "$tmp\*" $dest -Recurse -Force -Exclude '.git','.github','tests','helpers'
                 Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
-                Write-Item "PSFzf 模块安装完成" 'ok'
-            } catch { Write-Item "PSFzf 安装失败 (fzf 仍可用)" 'fail' }
+                Write-Item "PSFzf 模块安装完成 (v$ver)" 'ok'
+            } catch { Write-Item "PSFzf 安装失败，fzf 仍可用: $($_.Exception.Message)" 'fail' }
         } else { Write-Item "PSFzf 已存在" 'skip' }
     }
     if (Want-Tool 'mdcat' 'Markdown 渲染 md') {
