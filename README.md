@@ -20,18 +20,9 @@ Built for **Windows + PowerShell 7**, friendly to **restricted networks** (scoop
 
 ## 📸 Preview
 
-```text
-   ~/code/myproject    main *
-❯ git status
-```
+![pwsh-pretty preview](./assets/preview.png)
 
-The path sits in a rounded, colored capsule so it never blends into the previous command's output. The arrow on line two turns **green on success** and **red on failure**, giving you instant feedback without reading exit codes.
-
-```text
-                      Terminal-Icons style ls, powered by eza
-  Cargo.toml      kimi          ISO
-  src             docs            README.md
-```
+The path sits in a rounded, colored capsule so it never blends into the previous command's output. The arrow on line two turns **green on success** and **red on failure**, giving you instant feedback without reading exit codes. `ls` shows colored Nerd Font icons with directories first.
 
 ---
 
@@ -92,6 +83,24 @@ Plus two files deployed next to your `$PROFILE`:
 ---
 
 ## 🚀 Quick start
+
+### Option A — one-liner (recommended)
+
+Run this in **PowerShell 7**:
+
+```powershell
+irm https://raw.githubusercontent.com/Xynrin/pwsh-pretty/main/bootstrap.ps1 | iex
+```
+
+Behind a proxy? Set it first:
+
+```powershell
+$env:PWSH_PRETTY_PROXY='http://127.0.0.1:7897'; irm https://raw.githubusercontent.com/Xynrin/pwsh-pretty/main/bootstrap.ps1 | iex
+```
+
+> Want to skip the font? `$env:PWSH_PRETTY_SKIPFONT='1'` before running.
+
+### Option B — clone & run
 
 ```powershell
 git clone https://github.com/Xynrin/pwsh-pretty.git

@@ -20,12 +20,9 @@
 
 ## 📸 效果预览
 
-```text
-   ~/code/myproject    main *
-❯ git status
-```
+![pwsh-pretty 预览](./assets/preview.png)
 
-路径被放在一个圆角彩色胶囊里，不会和上一行命令的输出糊在一起。第二行的箭头会根据上条命令的结果变色——**成功为绿色，失败为红色**，不用看退出码就知道结果。
+路径被放在一个圆角彩色胶囊里，不会和上一行命令的输出糊在一起。第二行的箭头会根据上条命令的结果变色——**成功为绿色，失败为红色**，不用看退出码就知道结果。`ls` 显示彩色 Nerd Font 图标，目录优先排序。
 
 ---
 
@@ -86,6 +83,24 @@
 ---
 
 ## 🚀 快速开始
+
+### 方式 A —— 一键脚本（推荐）
+
+在 **PowerShell 7** 里运行：
+
+```powershell
+irm https://raw.githubusercontent.com/Xynrin/pwsh-pretty/main/bootstrap.ps1 | iex
+```
+
+需要代理？先设置：
+
+```powershell
+$env:PWSH_PRETTY_PROXY='http://127.0.0.1:7897'; irm https://raw.githubusercontent.com/Xynrin/pwsh-pretty/main/bootstrap.ps1 | iex
+```
+
+> 想跳过字体？运行前设置 `$env:PWSH_PRETTY_SKIPFONT='1'`。
+
+### 方式 B —— 克隆后运行
 
 ```powershell
 git clone https://github.com/Xynrin/pwsh-pretty.git
