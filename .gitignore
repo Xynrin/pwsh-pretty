@@ -1,0 +1,12 @@
+# OS / editor cruft
+Thumbs.db
+desktop.ini
+.DS_Store
+*.swp
+*~
+
+# Backups created by install/uninstall (should not be committed)
+*.pwsh-pretty-backup
+
+# Local test artifacts
+pwsh-pretty-test/
